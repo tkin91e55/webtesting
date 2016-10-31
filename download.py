@@ -5,6 +5,7 @@ def download(url, num_retries=2):
     print 'Downloading:', url
     try:
         html = urllib2.urlopen(url).read()
+        print html
     except urllib2.URLError as e:
         print 'Download error:', e.reason
         html = None
