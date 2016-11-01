@@ -35,12 +35,13 @@ def link_crawler(seed_url, link_regex):
     crawl_queue = [seed_url]
     while crawl_queue:
         url = crawl_queue.pop()
-    html = download(url)
-    # filter for links matching our regular expression
-    for link in get_links(html):
-        if re.match(link_regex, link):
-            crawl_queue.append(link)
-            print str(link)
+        html = download(url)
+        # filter for links matching our regular expression
+        for link in get_links(html):
+            if re.match(link_regex, link):
+                crawl_queue.append(link)
+                print str(link)
+
 
 def get_links(html):
     """Return a list of links from html
