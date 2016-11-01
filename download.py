@@ -1,6 +1,7 @@
 import urllib2
 import re
 import urlparse
+from parseRobotTxt import rp, user_agent
 
 
 def download(url, user_agent='wswp', num_retries=2):
@@ -38,15 +39,19 @@ def link_crawler(seed_url, link_regex):
     seen = set(crawl_queue)
     while crawl_queue:
         url = crawl_queue.pop()
-        html = download(url)
-        # filter for links matching our regular expression
-        for link in get_links(html):
-            if re.match(link_regex, link):
-                link = urlparse.urljoin(seed_url, link)
-                if link not in seen:
-                    seen.add(link)
-                    crawl_queue.append(link)
-                    print str(link)
+        # check url passes robots.txt restrictions
+        if rp.can_fetch(user_agent, url):
+            html = download(url)
+            # filter for links matching our regular expression
+            for link in get_links(html):
+                if re.match(link_regex, link):
+                    link = urlparse.urljoin(seed_url, link)
+                    if link not in seen:
+                        seen.add(link)
+                        crawl_queue.append(link)
+                        print str(link)
+        else:
+            print 'Blocked by robots.txt:', url
 
 
 def get_links(html):
