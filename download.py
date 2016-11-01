@@ -1,5 +1,6 @@
 import urllib2
 import re
+import urlparse
 
 
 def download(url, user_agent='wswp', num_retries=2):
@@ -39,6 +40,7 @@ def link_crawler(seed_url, link_regex):
         # filter for links matching our regular expression
         for link in get_links(html):
             if re.match(link_regex, link):
+                link = urlparse.urljoin(seed_url, link)
                 crawl_queue.append(link)
                 print str(link)
 
