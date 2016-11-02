@@ -69,3 +69,7 @@ def get_links(html):
                                re.IGNORECASE)
     # list of all links from the webpage
     return webpage_regex.findall(html)
+
+if __name__ == '__main__':
+    # download('http://hk.yahoo.com')
+    link_crawler('http://example.webscraping.com', '/(index|view)/')
