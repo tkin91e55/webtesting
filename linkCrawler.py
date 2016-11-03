@@ -110,7 +110,9 @@ def download(url, headers, proxy, num_retries, data=None):
 def normalize(seed_url, link):
     """Normalize this URL by removing hash and adding domain
     """
+    print 'link before: ', str(link)
     link, _ = urlparse.urldefrag(link)  # remove hash to avoid duplicates
+    print 'link after: ', str(link)
     return urlparse.urljoin(seed_url, link)
 
 
@@ -159,6 +161,6 @@ class ScrapeCallback:
         self.writer.writerow(row)
 
 if __name__ == '__main__':
-    link_crawler('http://example.webscraping.com', '/(index|view)', delay=0, num_retries=1, user_agent='BadCrawler')
+    #link_crawler('http://example.webscraping.com', '/(index|view)', delay=0, num_retries=1, user_agent='BadCrawler')
     link_crawler('http://example.webscraping.com/places/view/United-Kingdom-239', '/(index|view)', delay=0, num_retries=1, max_depth=-1,
                  user_agent='GoodCrawler', scrape_callback=ScrapeCallback()) #or scrape_callback=scrape_callback
