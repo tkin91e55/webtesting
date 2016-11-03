@@ -144,7 +144,7 @@ def scrape_callback(url, html):
     if re.search('/view/', url):
         tree = lxml.html.fromstring(html)
         row = [tree.cssselect('table > tr#places_%s__row > td.w2p_fw' % field)[0].text_content() for field in FIELDS]
-    print url, row
+        print url, row
 
 
 class ScrapeCallback:
@@ -154,13 +154,14 @@ class ScrapeCallback:
         self.writer.writerow(self.fields)
 
     def __call__(self, url, html):
-        tree = lxml.html.fromstring(html)
-        row = []
-        for field in self.fields:
-            row.append(tree.cssselect('table > tr#places_{}__row > td.w2p_fw'.format(field))[0].text_content())
-        self.writer.writerow(row)
+        if re.search('/view/', url):
+            tree = lxml.html.fromstring(html)
+            row = []
+            for field in self.fields:
+                row.append(tree.cssselect('table > tr#places_{}__row > td.w2p_fw'.format(field))[0].text_content())
+            self.writer.writerow(row)
 
 if __name__ == '__main__':
     #link_crawler('http://example.webscraping.com', '/(index|view)', delay=0, num_retries=1, user_agent='BadCrawler')
-    link_crawler('http://example.webscraping.com/places/view/United-Kingdom-239', '/(index|view)', delay=0, num_retries=1, max_depth=-1,
-                 user_agent='GoodCrawler', scrape_callback=ScrapeCallback()) #or scrape_callback=scrape_callback
+    link_crawler('http://example.webscraping.com', '/(index|view)', delay=0, num_retries=1, max_depth=-1,
+                 user_agent='GoodCrawler', scrape_callback=scrape_callback) #or scrape_callback=scrape_callback
