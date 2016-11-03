@@ -5,10 +5,13 @@ import time
 from datetime import datetime
 import robotparser
 import Queue
+import lxml.html
+from scraperComparison import FIELDS
+import csv
 
 
 def link_crawler(seed_url, link_regex=None, delay=5, max_depth=-1, max_urls=-1, headers=None, user_agent='wswp',
-                 proxy=None, num_retries=1):
+                 proxy=None, num_retries=1, scrape_callback=None):
     """Crawl from the given seed URL following links matched by link_regex
     """
     # the queue of URL's that still need to be crawled
@@ -30,6 +33,9 @@ def link_crawler(seed_url, link_regex=None, delay=5, max_depth=-1, max_urls=-1, 
             throttle.wait(url)
             html = download(url, headers, proxy=proxy, num_retries=num_retries)
             links = []
+
+            if scrape_callback:
+                links.extend(scrape_callback(url,html) or [])
 
             depth = seen[url]
             if depth != max_depth:
@@ -132,7 +138,27 @@ def get_links(html):
     return webpage_regex.findall(html)
 
 
+def scrape_callback(url, html):
+    if re.search('/view/', url):
+        tree = lxml.html.fromstring(html)
+        row = [tree.cssselect('table > tr#places_%s__row > td.w2p_fw' % field)[0].text_content() for field in FIELDS]
+    print url, row
+
+
+class ScrapeCallback:
+    def __init__(self):
+        self.writer = csv.writer(open('countries.csv', 'w'))
+        self.fields = FIELDS
+        self.writer.writerow(self.fields)
+
+    def __call__(self, url, html):
+        tree = lxml.html.fromstring(html)
+        row = []
+        for field in self.fields:
+            row.append(tree.cssselect('table > tr#places_{}__row > td.w2p_fw'.format(field))[0].text_content())
+        self.writer.writerow(row)
+
 if __name__ == '__main__':
     link_crawler('http://example.webscraping.com', '/(index|view)', delay=0, num_retries=1, user_agent='BadCrawler')
-    link_crawler('http://example.webscraping.com', '/(index|view)', delay=0, num_retries=1, max_depth=1,
-                 user_agent='GoodCrawler')
+    link_crawler('http://example.webscraping.com/places/view/United-Kingdom-239', '/(index|view)', delay=0, num_retries=1, max_depth=-1,
+                 user_agent='GoodCrawler', scrape_callback=ScrapeCallback()) #or scrape_callback=scrape_callback
