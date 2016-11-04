@@ -35,7 +35,7 @@ def link_crawler(seed_url, link_regex=None, delay=5, max_depth=-1, max_urls=-1, 
             links = []
 
             if scrape_callback:
-                links.extend(scrape_callback(url,html) or [])
+                links.extend(scrape_callback(url, html) or [])
 
             depth = seen[url]
             if depth != max_depth:
