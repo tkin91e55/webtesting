@@ -69,3 +69,7 @@ class MongoCache:
 
     def clear(self):
         self.db.webpage.drop()
+
+from link_crawler import link_crawler
+if __name__ == '__main__':
+    link_crawler('http://example.webscraping.com/', '/(index|view)', cache=MongoCache())
