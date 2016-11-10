@@ -9,7 +9,7 @@ from alexa_cb import AlexaCallback
 def main(max_threads):
     scrape_callback = AlexaCallback()
     cache = MongoCache()
-    cache.clear()
+    #cache.clear()
     process_crawler(scrape_callback.seed_url, scrape_callback=scrape_callback, cache=cache, max_threads=max_threads, timeout=10)
 
 
