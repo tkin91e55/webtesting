@@ -61,7 +61,8 @@ class Downloader:
             html = ''
             if hasattr(e, 'code'):
                 code = e.code
-                if num_retries > 0 and 500 <= code < 600:
+                #if num_retries > 0 and 500 <= code < 600:
+                if False: #try download is not correct here
                     # retry 5XX HTTP errors
                     return self._get(url, headers, proxy, num_retries - 1, data)
             else:
@@ -89,3 +90,7 @@ class Throttle:
             if sleep_secs > 0:
                 time.sleep(sleep_secs)
         self.domains[domain] = datetime.now()
+
+if __name__ == '__main__':
+    D = Downloader();
+    print D('http://mmmoffice.com');
