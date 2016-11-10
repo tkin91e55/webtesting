@@ -61,9 +61,8 @@ class Downloader:
             html = ''
             if hasattr(e, 'code'):
                 code = e.code
-                #if num_retries > 0 and 500 <= code < 600:
-                if False: #try download is not correct here
-                    # retry 5XX HTTP errors
+                #if num_retries > 0 and 500 <= code < 600: # retry 5XX HTTP errors
+                if False: #try re download is not correct here, _get() is not defined neither documented
                     return self._get(url, headers, proxy, num_retries - 1, data)
             else:
                 code = None
